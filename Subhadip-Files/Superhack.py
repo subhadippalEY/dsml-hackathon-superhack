@@ -26,7 +26,8 @@ class ReplaceInf(BaseEstimator, TransformerMixin):
     
 # Load your dataset
 # Assuming the dataset is in CSV format and stored at 'software_quality_data.csv'
-df = pd.read_csv('C:\\Users\XZ957MG\\source\\repos\\IIIMRoorkie-Assignment\\IIIMRoorkie-Assignment\\Hackathon\\train_data1.csv')
+df = pd.read_csv('C:\\Users\XZ957MG\\source\\repos\\IIIMRoorkie-Assignment\\IIIMRoorkie-Assignment\\Hackathon\\train_data.csv')
+df_test = pd.read_csv('C:\\Users\XZ957MG\\source\\repos\\IIIMRoorkie-Assignment\\IIIMRoorkie-Assignment\\Hackathon\\test_data.csv')
 
 # Splitting the dataset into features and target variable
 X = df.drop(['id', 'defects'], axis=1)
@@ -34,6 +35,25 @@ y = df['defects']
 
 # Splitting data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, train_size = 0.2, random_state=42) #test_size=32056, train_size=74794, random_state=42)
+
+
+# Splitting the dataset into features and target variable
+#X_train = df.drop(['id', 'defects'], axis=1)
+#y_train = df['defects']
+
+# Handle missing values
+#X_train = X_train.fillna(0)
+
+# Splitting the dataset into features and target variable
+X_test = df_test.drop(['id'], axis=1)
+# Then, add a new column "defects" with all values set to 0
+X_test['defects'] = 0
+
+y_test = X_test['defects']
+X_test = X_test.drop(['defects'], axis=1) 
+
+# Handle missing values
+#X_test = X_test.fillna(0)
 
 # Identifying numerical and categorical columns
 numerical_cols = X_train.select_dtypes(include=['int64', 'float64']).columns
@@ -71,6 +91,46 @@ X_test_preprocessed = preprocessor.transform(X_test)
 print(X_train_preprocessed)
 print(X_test_preprocessed)
 
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+# # Setting the aesthetic style of the plots
+# sns.set_style("whitegrid")
+
+# # Distribution of defects
+# plt.figure(figsize=(6, 4))
+# sns.countplot(x='defects', data=df)
+# plt.title('Distribution of Defects')
+# plt.show()
+
+# # Correlation matrix heatmap
+# plt.figure(figsize=(12, 10))
+# corr_matrix = df[numerical_cols].corr()
+# sns.heatmap(corr_matrix, annot=True, fmt=".2f")
+# plt.title('Correlation Matrix of Numerical Features')
+# plt.show()
+
+# # Boxplot for McCabe Cyclomatic Complexity
+# plt.figure(figsize=(6, 4))
+# sns.boxplot(x='defects', y='McCabeCyclomaticComplexity', data=df)
+# plt.title('McCabe Cyclomatic Complexity by Defects')
+# plt.show()
+
+# # Distribution of Code Age
+# plt.figure(figsize=(6, 4))
+# sns.histplot(df['CodeAge'], bins=30, kde=True)
+# plt.title('Distribution of Code Age')
+# plt.show()
+
+# # Exploring categorical data: CodeLanguage distribution
+# plt.figure(figsize=(8, 6))
+# sns.countplot(y='CodeLanguage', data=df, order = df['CodeLanguage'].value_counts().index)
+# plt.title('Distribution of Code Languages')
+# plt.show()
+
+
 # Now, X_train_preprocessed and X_test_preprocessed are ready for model training and evaluation.
 # Assuming X_train_preprocessed, X_test_preprocessed, y_train, y_test are already defined
 
@@ -90,5 +150,7 @@ y_pred = model_pipeline.predict(X_test)
 # Model Evaluation
 print("Accuracy:", accuracy_score(y_test, y_pred))
 print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+
 
 
